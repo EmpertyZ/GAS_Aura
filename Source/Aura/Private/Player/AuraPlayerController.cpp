@@ -2,6 +2,7 @@
 
 
 #include "Player/AuraPlayerController.h"
+#include "EnhancedInputComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -29,4 +30,33 @@ void AAuraPlayerController::BeginPlay()
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);//设置鼠标不越过viewport
 	InputModeData.SetHideCursorDuringCapture(false);//设置鼠标按下时不隐藏鼠标
 	SetInputMode(InputModeData);//设置所设置好的输入模式
+}
+
+//设置输入组件,用于自定义输入绑定
+void AAuraPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	//转换且获取增强输入组件，CastChecked相当于cast加check
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+
+	//绑定输入动作
+	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	
+}
+
+void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
+{
+	const FVector2d InputAxisVector = InputActionValue.Get<FVector2d>();
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0.f, Rotation.Yaw,0.f);//初始化YawRotation
+	
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);//获取向前向量
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);//获取向左向量
+
+	if(APawn* ControllerPawn = GetPawn())
+	{
+		ControllerPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
+		ControllerPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}
 }

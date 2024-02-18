@@ -8,6 +8,9 @@
 #include "AuraPlayerController.generated.h"
 
 class UInputMappingContext;
+class UInputAction;
+
+
 /**
  * 
  */
@@ -21,8 +24,15 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	//设置输入组件,用于自定义输入绑定
+	virtual void SetupInputComponent() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="输入")
 	TObjectPtr<UInputMappingContext> AuraContext;//玩家输入上下文
+
+	UPROPERTY(EditAnywhere, Category="输入")
+	TObjectPtr<UInputAction> MoveAction;
+
+	void Move(const FInputActionValue& InputActionValue);
 };

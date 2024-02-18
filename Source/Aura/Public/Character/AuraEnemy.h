@@ -4,14 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Character/ACharacter.h"
+#include "Interface/EnemyInterface.h"
 #include "AuraEnemy.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_API AAuraEnemy : public AACharacter
+class AURA_API AAuraEnemy : public AACharacter, public IEnemyInterface
 {
 	GENERATED_BODY()
-	
+
+public:
+	//重写怪物接口里的高亮方法
+	virtual void HighlightActor() override;
+	virtual void UnHighlightActor() override;
 };
