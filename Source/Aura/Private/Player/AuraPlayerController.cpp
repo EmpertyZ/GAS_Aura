@@ -3,11 +3,78 @@
 
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputComponent.h"
+#include "Interface/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	//开启网络复制
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	//检测光标追踪
+	CursorTrace();
+}
+//检测光标追踪
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorResult;
+	GetHitResultUnderCursor(ECC_Visibility, false,  CursorResult);
+	//判断光标追踪是否被阻挡
+	if (!CursorResult.bBlockingHit) return;
+
+	//记录上次命中的actor
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorResult.GetActor());
+	
+	/**
+	 * 光标跟踪时出现的情况：
+	 *	1.LastActor和ThisActor都为null
+	 *		-不做处理
+	 *	2.LastActor is null，ThisActor is valid
+	 *		-highlight ThisActor
+	 *	3.LastActor is valid，ThisActor is null
+	 *		-UnHighlight LastActor
+	 *	4.LastActor is valid，ThisActor is valid，and LastActor == ThisActor
+	 *		-不做处理
+	 *	5.LastActor is valid，ThisActor is valid，but LastActor != ThisActor
+	 *		-UnHighlight LastActor，Highlight ThisActor
+	 */
+	if (LastActor == nullptr)
+	{
+		if (ThisActor == nullptr)
+		{
+			//情况1：-不做处理
+		}
+		else
+		{
+			//情况2：-highlight ThisActor
+			ThisActor->HighlightActor();
+		}
+	}
+	else
+	{
+		if (ThisActor == nullptr)
+		{
+			//情况3：-UnHighlight LastActor
+			LastActor->UnHighlightActor();
+		}
+		else
+		{
+			if (LastActor == ThisActor)
+			{
+				//情况4：-不做处理
+				
+			}
+			//情况5：-UnHighlight LastActor，Highlight ThisActor
+			LastActor ->UnHighlightActor();
+			ThisActor ->HighlightActor();
+		}
+	}
+	
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -60,3 +127,5 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControllerPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 }
+
+

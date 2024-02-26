@@ -9,7 +9,7 @@
 
 class UInputMappingContext;
 class UInputAction;
-
+class IEnemyInterface;
 
 /**
  * 
@@ -22,6 +22,8 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController(); //构造函数
 
+	virtual void PlayerTick(float DeltaTime) override;
+	
 protected:
 	virtual void BeginPlay() override;
 	//设置输入组件,用于自定义输入绑定
@@ -34,5 +36,12 @@ private:
 	UPROPERTY(EditAnywhere, Category="输入")
 	TObjectPtr<UInputAction> MoveAction;
 
+	//移动方法
 	void Move(const FInputActionValue& InputActionValue);
+
+	//鼠标光标追踪
+	void CursorTrace();
+
+	IEnemyInterface* LastActor;
+	IEnemyInterface* ThisActor;
 };
