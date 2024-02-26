@@ -14,6 +14,11 @@ AACharacter::AACharacter()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);//设置碰撞为无碰撞
 }
 
+UAbilitySystemComponent* AACharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 // Called when the game starts or when spawned
 void AACharacter::BeginPlay()
 {
