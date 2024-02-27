@@ -17,11 +17,12 @@ class AURA_API AAuraEnemy : public AACharacter, public IEnemyInterface
 
 public:
 	AAuraEnemy();
-	//重写怪物接口里的高亮方法
+	/** 重写怪物接口里的高亮方法 */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bHighlighted = false;//用于判断是否高亮
+	/** end 重写怪物接口里的高亮方法 */
 	
+protected:
+	
+	virtual void BeginPlay() override;
 };

@@ -12,6 +12,8 @@ AACharacter::AACharacter()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");//创建character下名字为weapon的子组件
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));//将改组件附加到weaponhandsocket
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);//设置碰撞为无碰撞
+
+	
 }
 
 UAbilitySystemComponent* AACharacter::GetAbilitySystemComponent() const
