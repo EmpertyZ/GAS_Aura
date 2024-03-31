@@ -47,7 +47,11 @@ public:
 	//外部设置widgetController结构体参数方法
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& NewParam);//值传递
-	
+	//初始化广播值虚方法
+	virtual void BroadcastInitValue();
+
+	//声明虚方法  绑定回调到依赖项
+	virtual void BindCallbackToDependencies();
 protected:
 	/*用于控制UI属性*/
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")

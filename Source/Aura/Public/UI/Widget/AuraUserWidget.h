@@ -15,13 +15,13 @@ class AURA_API UAuraUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-
+	UFUNCTION(BlueprintCallable)
 	void SetWidgetController(UObject* InWidgetController);
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UObject> WidgetController;
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)//BlueprintImplementableEvent:在C++可以声明函数（不能定义，蓝图重写），在C++里调用该函数，蓝图重写实现该函数
+	UFUNCTION(BlueprintImplementableEvent)//BlueprintImplementableEvent:在C++可以声明函数（不能定义，蓝图重写），在C++里调用该函数，蓝图重写实现该函数，蓝图调用了则会执行
 	void WidgetControllerSet();
 };

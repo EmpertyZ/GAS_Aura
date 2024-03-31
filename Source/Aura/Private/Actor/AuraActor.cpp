@@ -39,9 +39,11 @@ void AAuraActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{	//从AbilitySystemComponent()获取AuraAttributeSet
 		const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(
 			ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
-		
+
+		//测试使用，后面需要更改
 		UAuraAttributeSet* MutableAuraAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);//const_cast强制转换,不推荐使用
 		MutableAuraAttributeSet->SetHealth(MutableAuraAttributeSet->GetHealth() + 25.f);//重叠后增加25生命值
+		MutableAuraAttributeSet->SetMana(MutableAuraAttributeSet->GetMana() - 20.f);//重叠后减20蓝
 		Destroy();//碰到后销毁该对象
 	}
 	

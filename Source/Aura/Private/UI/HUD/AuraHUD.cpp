@@ -18,6 +18,9 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
 
 		//这里是一个回调广播
+		//绑定回调依赖项，在数据更新时调用方法里面绑定的委托，实现UI数据更新
+		OverlayWidgetController->BindCallbackToDependencies();
+		
 	}
 
 	return OverlayWidgetController;
@@ -36,6 +39,9 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 	OverlayWidget->SetWidgetController(WidgetController);
+
+	//广播初始值
+	WidgetController->BroadcastInitValue();
 	
 	UserWidget->AddToViewport();
 }
