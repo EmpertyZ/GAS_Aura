@@ -2,7 +2,7 @@
 
 
 #include "Actor/AuraActor.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -14,44 +14,35 @@ AAuraActor::AAuraActor()
  	//游戏开始时不需要启用tick
 	PrimaryActorTick.bCanEverTick = false;
 
-    Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	SetRootComponent(Mesh);
-    Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
-	Sphere->SetupAttachment(GetRootComponent());//将球形碰撞检测绑定在根组件上
-	
-
+	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
 }
 
 // Called when the game starts or when spawned
 void AAuraActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//在球体上绑定重叠事件委托,添加动态委托，相当于蓝图中的调用事件分发
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraActor::OnOverlap);
-	Sphere->OnComponentEndOverlap.AddDynamic(this, &AAuraActor::EndOverlap);
+
 }
 
-void AAuraActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuraActor::ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GamePlayEffectClass)
 {
-	if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(OtherActor))/*获取所重叠的actor所实现的接口*/
-	{	//从AbilitySystemComponent()获取AuraAttributeSet
-		const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(
-			ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
+	//从目标Actor的abilitySystem接口，获取GetAbilitySystemComponent
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	//检查获取的目标ASC和传入的变量是否为空
+	if (TargetASC == nullptr) return;
+	check(GamePlayEffectClass);
 
-		//测试使用，后面需要更改
-		UAuraAttributeSet* MutableAuraAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);//const_cast强制转换,不推荐使用
-		MutableAuraAttributeSet->SetHealth(MutableAuraAttributeSet->GetHealth() + 25.f);//重叠后增加25生命值
-		MutableAuraAttributeSet->SetMana(MutableAuraAttributeSet->GetMana() - 20.f);//重叠后减20蓝
-		Destroy();//碰到后销毁该对象
-	}
-	
+	//规范套路
+	//创建EffectContext，其上下文返回的是一个句柄
+	FGameplayEffectContextHandle EffectContextHandle = TargetASC->MakeEffectContext();
+	//通过句柄添加产生效果的对象
+	EffectContextHandle.AddSourceObject(this);
+	//创建输出到外部的效果规范,返回的是一个句柄
+	FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GamePlayEffectClass, 1.f, EffectContextHandle);
+	//设置输出的效果作用给自身
+	TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
 
-void AAuraActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-}
+
 
 
