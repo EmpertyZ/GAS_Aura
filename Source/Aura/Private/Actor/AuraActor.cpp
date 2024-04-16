@@ -24,10 +24,10 @@ void AAuraActor::BeginPlay()
 
 }
 
-void AAuraActor::ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GamePlayEffectClass)
+void AAuraActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GamePlayEffectClass)
 {
 	//从目标Actor的abilitySystem接口，获取GetAbilitySystemComponent
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	//检查获取的目标ASC和传入的变量是否为空
 	if (TargetASC == nullptr) return;
 	check(GamePlayEffectClass);

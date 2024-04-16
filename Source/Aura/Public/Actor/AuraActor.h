@@ -22,10 +22,12 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GamePlayEffectClass);//声明将GameplayEffect作用到目标actor上的方法
+	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GamePlayEffectClass);//声明将GameplayEffect作用到目标actor上的方法
 	
-	UPROPERTY(EditAnywhere, Category="Applied Effects")//创建GameplayEffect
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")//创建GameplayEffect
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Applied Effects")
+	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 	
 };
